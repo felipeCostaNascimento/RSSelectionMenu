@@ -25,9 +25,17 @@
 
 import UIKit
 
+public protocol RSSelectionMenuActionsDelegate: class {
+    
+    func rsSelectionMenu<T>(selectionMenu: RSSelectionMenu<T>, didTouchRightBarItem barItem: UIBarButtonItem)
+}
+
+
 /// RSSelectionMenuController
 open class RSSelectionMenu<T>: UIViewController, UIPopoverPresentationControllerDelegate, UIGestureRecognizerDelegate {
 
+    public weak var delegate: RSSelectionMenuActionsDelegate?
+    
     // MARK: - Views
     public var tableView: RSSelectionTableView<T>?
     
@@ -218,12 +226,13 @@ open class RSSelectionMenu<T>: UIViewController, UIPopoverPresentationController
     /// Done button
     fileprivate func setDoneButton() {
         let doneTitle = (self.rightBarButtonTitle != nil) ? self.rightBarButtonTitle! : doneButtonTitle
-        let doneButton = UIBarButtonItem(title: doneTitle, style: .done, target: self, action: #selector(doneButtonTapped))
+        let doneButton = UIBarButtonItem(title: doneTitle, style: .done, target: self, action: #selector(doneButtonTapped(button:)))
         navigationItem.rightBarButtonItem = doneButton
     }
     
-    @objc func doneButtonTapped() {
-        self.dismiss()
+    @objc func doneButtonTapped(button: UIBarButtonItem) {
+        delegate?.rsSelectionMenu(selectionMenu: self, didTouchRightBarItem: button)
+        //        self.dismiss()
     }
     
     /// cancel button
@@ -233,6 +242,9 @@ open class RSSelectionMenu<T>: UIViewController, UIPopoverPresentationController
         navigationItem.leftBarButtonItem = cancelButton
     }
     
+    @objc func cancelButtonTapped() {
+        self.dismiss()
+    }
     
     
     // MARK: - UIPopoverPresentationControllerDelegate

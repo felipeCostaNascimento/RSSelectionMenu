@@ -188,4 +188,9 @@ extension RSSelectionTableView {
             selectionMenu?.dismiss()
         }
     }
+    
+    public func removeAllSelectedAndReload(){
+        self.selectionDelegate?.removeAllSelectedItems()
+        self.reloadData()
+    }
 }
